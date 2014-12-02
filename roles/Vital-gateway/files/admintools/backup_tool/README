@@ -1,0 +1,42 @@
+This is the README file for the backup_vlab.sh script
+
+Requirements
+------------------
+1. Shells
+sh or bash
+
+2. Files to back up
+
+Usage
+------------------
+./backup_vlab.sh files2bkup
+
+Will generate three (3) files:
+-bkfile_modt
+-list.status
+-newfiles
+
+
+configuration file: files2bkup
+------------------
+List of files to be backed up. The absolute path of each file should be entered, one per line.
+
+
+bkfile_modt
+------------------
+A file that consist of all the files that have been backed up. The file format 
+is:
+
+filename:time of last modification as seconds since epoch
+
+list.status
+------------------
+A file which is used to indicate if a new file has been added to files2bkup
+
+newfiles
+------------------
+A file that list the new files to be processed by the backup_vlab.sh
+
+
+
+

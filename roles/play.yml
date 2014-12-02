@@ -1,0 +1,11 @@
+---
+
+- hosts: Gluster-storage
+    - Gluster-storage
+
+- hosts: Xen-node
+    - Xen-node
+
+- hosts: Vital-gateway
+  roles:
+    - Vital-gateway

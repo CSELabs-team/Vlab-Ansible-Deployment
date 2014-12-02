@@ -1,0 +1,16 @@
+---
+
+galaxy_info:
+  author: Jash Lee
+  description: An ansible role for installing and configuring Vital-Frontend.
+  company: NYU
+  license: BSD
+  min_ansible_version: 1.4
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+  categories:
+    - system
+    - networking
+dependencies: []

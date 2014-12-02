@@ -1,0 +1,4 @@
+# These scripts are intended to be helper functions.  The primary interface
+# should be the admin page.  These scripts do not execute commands against the
+# DB, but instead generate SQL which is to be reviewed before running against
+# the live DB.

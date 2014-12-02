@@ -1,0 +1,160 @@
+---
+
+- name: Run the equivalent of "apt-get update" as a separate step
+  apt: update_cache=yes
+
+- name: Upgrade apt cache
+  apt: upgrade=yes
+
+- name: Update all packages to the latest version
+  apt: upgrade=dist
+
+- name: Install list of packages
+  apt: pkg={{item}} state=installed
+  with_items: 
+    - vlan
+    - ifenslave
+    - bridge-utils
+    - glusterfs-client
+    - apache2 
+    - postgresql 
+    - php5 
+    - libapache2-mod-php5 
+    - php5-pgsql 
+    - tcpdump 
+    - libjpeg62 
+    - libjpeg8 
+    - libjpeg8-dev 
+    - sendmail
+    - nfs-common
+
+- name: Configure /etc/hosts
+  lineinfile: dest=/etc/hosts line="{{ item }}"
+  with_items:
+    - '192.168.35.1 Vlab-vital'
+    - '192.168.35.11 Vlab-gluster1'
+    - '192.168.35.22 Vlab-gluster2'
+    - '192.168.35.33 Vlab-xen1'
+    - '192.168.35.44 Vlab-xen2'
+    - '192.168.35.55 Vlab-xen3' 
+    - '192.168.35.66 Vlab-xen4'
+    - '192.168.35.77 Vlab-xen5'
+    - '192.168.35.99 Vlab-backup'
+
+- name: Create a 2048-bit SSH key for root
+  user: name=root generate_ssh_key=yes ssh_key_bits=2048
+
+- name: Creates directories
+  file: path=/var/log/vlab/ state=directory owner=www-data group=www-data mode=0640
+
+- name: Creates directories
+  file: path=/startup_gateway state=directory owner=root group=root mode=0640
+
+- name: Creates directories
+  file: path=/home/gateway-installer state=directory owner=root group=root mode=0640
+
+- name: copy the files to /home/gateway-installer
+  copy: src=files/gateway-installer/ dest=/home/gateway-installer/ mode=640
+
+- name: copy the files to /startup_gateway
+  copy: src=files/startup_gateway/ dest=/startup_gateway/ mode=640
+
+- name: Edit Crontab job
+  cron: name="Stop-old-VMs" minute="*/10" job="/startup_gateway/stop-old.sh >> /var/log/vlab/cron-stop-old-output"
+
+- name: Creates an entry like "@reboot /some/job.sh"
+  cron: name="Startup script" special_time=reboot job="/startup_gateway/startup-gateway.sh > /dev/null 2>&1"
+
+#- name:  Set ip forwarding on in /proc and in the sysctl file and reload if necessary
+#  sysctl: name="net.ipv4.ip_forward" value=1 sysctl_set=yes state=present reload=yes
+
+- name:  Set ip forwarding on in /proc and in the sysctl file and reload if necessary
+  lineinfile: dest=/etc/sysctl.conf regexp="^#net.ipv4.ip_forward = 1" line="net.ipv4.ip_forward = 1"
+
+- name: Enable the modules
+  modprobe: name={{ item }} state=present
+  with_items:
+    - "802.1q"
+    # - "bonding"
+
+- name: Configure /etc/modules file
+  lineinfile: dest=/etc/modules line={{ item }}
+    - "802.1q"
+    # - "bonding"
+
+- name: Create a new database with name "vlab"
+  postgresql_db: name=vlab
+
+- name: Ensure user:postgres has access to database
+  postgresql_user: db=vlab name=postgres password=postgres priv=ALL
+
+- name: Run Vlab-schema for postgresql
+  command: {{ item }}
+  with_items:
+  - psql -d vlab -f /home/gateway-installer/vlab-schema.sql
+  - psql -d vlab -f /home/gateway-installer/vlab-data.sql
+
+notify:
+    - restart postgresql
+
+- name: Run Script : Add accounts to DB
+  script: /home/gateway-installer/add_accounts.sh
+
+- name: Create /var/www/glf username and password in batch mode
+  command: htpasswd -b /usr/local/apache2/passwd/passwords glfadmin postgres
+
+- name:  template Vlab pache2 conf
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+  - { src: 'templates/vlab.http.conf.j2', dest: '/etc/apache2/sites-available/vlab.http.conf' }
+  - { src: 'templates/vlab.https.conf.j2', dest: '/etc/apache2/sites-available/vlab.https.conf' }
+
+- name: Enable Apache module
+  command: {{ item }}
+  with_items:
+  - a2enmod ssl rewrite
+  - a2ensite vlab.http.conf
+  - a2ensite vlab.https.conf
+
+- name: Copy Vlab source code
+  copy: src=files/www/ dest=/var/www mode=640 owner=www-data group=www-data
+
+- name: Check that our Apache config is valid
+  command: apache2ctl configtest
+
+notify:
+    - restart apache
+
+- name: Copy the SSL certificate key
+  copy: src={{ item.key_src }} dest={{ item.key_dest }} mode=640
+  with_items: 
+  - { key_src: "files/gateway-installer/poly_cert.pem", key_dest: "/etc/ssl/certs/poly_cert.pem" }
+  - { key_src: "files/gateway-installer/poly_key.key", key_dest: "/etc/ssl/private/poly_key.key" }
+
+notify:
+    - restart apache
+
+- name: Configure /etc/fstab on clients for gluster server
+  mount: name={{ item.dest }} src={{ item.source }} fstype=glusterfs opts="defaults,_netdev 0 0" state=mounted
+  with_items: 
+    - { dest: "/home/OS_images", source: "Vlab-gluster1:/vlab/OS_images" }
+    - { dest: "/home/local_blade/OS_images", source: "Vlab-gluster1:/vlab/OS_images" }
+    - { dest: "/home/vlab_scp", source: "Vlab-gluster1:/vlab/vlab_scp" }
+    - { dest: "/home/vmdsk", source: "Vlab-gluster1:/vlab/vmdsk" }
+    - { dest: "/home/backup", source: "Vlab-backup:/mnt/backup/" }
+
+- name: Configure /etc/fstab mount Vlab-backup
+  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock 0 0" state=mounted
+  tags:
+    - nfs
+
+- name: Run Script : Deploy root SSH Public Key to others
+  script: /home/gateway-installer/ssh-copy-id-multi.sh
+
+- name: Reboot
+  command: /sbin/shutdown -r now
+
+
+
+
+

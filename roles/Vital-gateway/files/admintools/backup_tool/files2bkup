@@ -1,0 +1,9 @@
+postgresql
+/etc/postgresql
+/etc/apache2
+/home/OS_images
+/home/vmdsk
+/home/vlab_scp
+/home/egavas
+/var/www-ssl
+/usr/local/apache

@@ -1,0 +1,5 @@
+Vlab-gluster1:/vlab/OS_images      /home/OS_images glusterfs defaults,_netdev 0 0
+Vlab-gluster1:/vlab/OS_images      /home/local_blade/OS_images glusterfs defaults,_netdev 0 0
+Vlab-gluster1:/vlab/vlab_scp       /home/vlab_scp  glusterfs defaults,_netdev 0 0
+Vlab-gluster1:/vlab/vmdsk          /home/vmdsk     glusterfs defaults,_netdev 0 0
+Vlab-backup:/mnt/backup/            /home/backup    glusterfs defaults,_netdev 0 0

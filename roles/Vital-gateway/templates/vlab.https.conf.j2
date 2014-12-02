@@ -1,0 +1,47 @@
+<IfModule mod_ssl.c>
+        <VirtualHost _default_:443>
+                ServerAdmin cselabs-team-group@nyu.edu
+
+                DocumentRoot /var/www
+
+                ErrorLog ${APACHE_LOG_DIR}/error.log
+                CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+                <Directory />
+                        Options FollowSymLinks
+                        AllowOverride None
+                </Directory>
+
+                <Directory /var/www/>
+                        Options Indexes FollowSymLinks MultiViews
+                        AllowOverride None
+                        Require all granted
+                </Directory>
+
+                <Directory /var/www/glf>
+                        AuthType Basic
+                        AuthName "Restricted"
+                        AuthUserFile /usr/local/apache2/passwd/passwords
+                        Require user glfadmin
+                </Directory>
+
+                SSLEngine on
+
+                SSLCertificateFile /etc/ssl/certs/poly_cert.pem
+                SSLCertificateKeyFile /etc/ssl/private/poly_key.key
+
+                <FilesMatch "\.(cgi|shtml|phtml|php)$">
+                                SSLOptions +StdEnvVars
+                </FilesMatch>
+                <Directory /usr/lib/cgi-bin>
+                                SSLOptions +StdEnvVars
+                </Directory>
+                
+                BrowserMatch "MSIE [2-6]" \
+                                nokeepalive ssl-unclean-shutdown \
+                                downgrade-1.0 force-response-1.0
+                # MSIE 7 and newer should be able to use keepalive
+                BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+
+        </VirtualHost>
+</IfModule>

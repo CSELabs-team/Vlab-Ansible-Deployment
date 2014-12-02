@@ -1,0 +1,13 @@
+Redirections will occur to down/index.html at the following location:
+
+DocumentRoot /var/www-ssl/
+
+/index.php
+-There is a Location redirection. Either comment or uncomment ir during and 
+after maintenance.
+
+interim/index.html
+-There is a meta tag that is commented. Either comment or uncomment it during 
+and after maintenance.
+
+

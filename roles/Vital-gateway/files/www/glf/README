@@ -1,0 +1,56 @@
+Docs:
+
+Please forgive this code, it was written by a security guy.
+
+				--=[WebApp]=--
+
+Summary: 
+	The Webapp acts as a front end to the vlab environment, and does 
+section creation and management, as well as disk image creation and 
+management.  Each section has a nameable configuration which is 
+automatically stored in the database.  and existing classes can be 
+reconfigured to use stored configurations.
+
+Security Model:
+	This is an admin interface.  We have coded in as much redundant 
+security as possible given the time constraints, but ultimately the 
+admin is assumed to have full control of the server.
+
+**FILES
+AddClass.php 
+- Front end form that takes in Course Number, Name, and Class Size and
+  passes it onto MakeClass.php
+
+AddImage.php
+- Passes Image Details up to MakeImage.php.  
+  THE IMAGE MUST ALREADY BE ON THE SERVER.
+
+ClassInfo.php
+- Collects the Class you want and passes it onto GetClassInfo.php
+
+ConfigNICs.php
+- For each nic in a Set of VM's we can select the networks that we  
+  wish to have each machine assigned to, this selects the nets and then
+  passes it onto Confirm.php
+
+Configs.php 
+- Displays a table and a drop down menu from which the admin can select 
+  saved configurations for deletion.  This selection is then handed off 
+  to DeleteConf.php
+
+Confirm.php 
+- Presents a summary of the configuration that is about to be created for 
+  the section.  
+
+conf.php
+- configuration settings
+
+
+**Framework
+Database Interface
+Application Interface
+Security Interface
+
+
+				--=[Daemon]=--
+  

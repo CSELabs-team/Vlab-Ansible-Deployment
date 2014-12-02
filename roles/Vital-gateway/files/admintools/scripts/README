@@ -1,0 +1,7 @@
+# This directory contains a number of misc helper scripts which have been
+# helpful for various diagonstics and administrative tasks.  These scripts
+# should be run by the DB owner.  If needed, this is a helpful link to add a
+# user to a PostgreSQL DB
+# http://www.cyberciti.biz/faq/howto-add-postgresql-user-account/.  From the
+# PostgreSQL prompt, you will need to do at the following:
+

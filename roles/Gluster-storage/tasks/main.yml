@@ -1,0 +1,54 @@
+---
+
+- name: Run the equivalent of "apt-get update" as a separate step
+  apt: update_cache=yes
+
+- name: Upgrade apt cache
+  apt: upgrade=yes
+
+- name: Update all packages to the latest version
+  apt: upgrade=dist
+
+- name: Install list of packages
+  apt: pkg={{item}} state=installed
+  with_items: 
+    - bridge-utils
+    - vlan
+    - ifenslave
+    - glusterfs-server
+    - nfs-common
+
+- name: Configure /etc/hosts
+  lineinfile: dest=/etc/hosts line="{{ item }}"
+  with_items:
+    - '192.168.35.1 Vlab-vital'
+    - '192.168.35.11 Vlab-gluster1'
+    - '192.168.35.22 Vlab-gluster2'
+    - '192.168.35.33 Vlab-xen1'
+    - '192.168.35.44 Vlab-xen2'
+    - '192.168.35.55 Vlab-xen3' 
+    - '192.168.35.66 Vlab-xen4'
+    - '192.168.35.77 Vlab-xen5'
+    - '192.168.35.99 Vlab-backup'
+
+- name: Create Gluster Storage Volume
+  command: "{{ item }}"
+  with_items:
+    - 'gluster peer probe Vlab-gluster1'
+    - 'gluster peer probe Vlab-gluster2'
+    - 'gluster volume create vlab transport tcp Vlab-gluster1:/mnt/data/ Vlab-gluster2:/mnt/data/'
+
+- name: Creates directories
+  file: path="{{ item }}" state=directory owner=root group=root mode=0644
+  with_items:
+  - '/mnt/data/OS_images'
+  - '/mnt/data/vmdsk'
+  - '/mnt/data/vlab_scp'
+  - '/mnt/data/local_blade/OS_images'
+
+- name: configure /etc/fstab mount Vlab-backup
+  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock 0 0" state=mounted
+  tags:
+    - nfs
+
+

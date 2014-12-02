@@ -1,0 +1,27 @@
+interim/interim.php:192:    if ( !$vm->isStatePending() ) {
+interim/interim.php:194:      if ( !$vm->isStarted() ) {
+interim/interim.php:203:#      $this->addTool(new HTMLWidget('<a href="#" onclick="return confirmReimage('.$reflectorId.', \''.$vm->getName().'\'); return false;">Reimage</a>'));
+interim/interim.php:204:      $this->addTool(new HTMLWidget('<a href="javascript:confirmReimage('.$reflectorId.', \''.$vm->getName().'\', \''.$vm->getBestName().'\');">Reimage</a>'));
+interim/interim.php:217:    return $this->vm->getOperationString();
+interim/interim.php:221:    $class = $this->vm->isStatePending() ? 'power_semi' : ( $this->vm->isStarted() ? 'power_on' : 'power_off' );
+interim/interim.php:222:    $class = $this->vm->isVMDisabled() ? 'vm_disabled' : $class;
+interim/interim.php:228:    $rtrn .= '<tr><td>'.$this->vm->getBestName().'</th></tr>';
+interim/interim.php:229:    $rtrn .= '<tr><td colspan="2" class="'.$class.'">'.$this->vm->getOperationString().'</td></tr>';
+interim/interim.php:443:    if ( $vm->isStarted() ){
+interim/interim.php:478:      //.'<h3 style="text-align:center;margin:0;">VM: '.$vm->getName().'</h3>'
+interim/interim.php:483:    if ( !$vm->isStatePending() ){
+interim/interim.php:484:      if ( !$vm->isStarted() )
+interim/interim.php:505:    if ( $vm->isStatePending() ){
+interim/interim.php:535:    if ( $vm->isStatePending() ) {
+interim/interim.php:539:    } else if ( $vm->isStarted()  ){
+interim/interim.php:718:      $vm->restart();
+interim/interim.php:727:      $vm->startup();
+interim/interim.php:737:      $vm->cancelPendingState();
+interim/interim.php:750:      $vm->shutdown();
+interim/interim.php:759:      $vm->save();
+interim/interim.php:768:      $vm->restore();
+interim/interim.php:777:      $vm->reimage();
+interim/interim.php:792:    if ( $vm->isStatePending() ) {
+interim/DBReflectorSession.php:80:    // $file_contents = file_get_contents( '/var/tmp/vlab/vm-list.out' );
+interim/DBReflectorSession.php:94:    // $vm->restart();
+Binary file release/Vlab_Bundle.zip matches
