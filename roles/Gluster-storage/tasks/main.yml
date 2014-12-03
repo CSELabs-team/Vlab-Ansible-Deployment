@@ -31,10 +31,25 @@
     - '192.168.35.77 Vlab-xen5'
     - '192.168.35.99 Vlab-backup'
 
+- name: Enable the modules
+  modprobe: name={{ item }} state=present
+  with_items:
+    - "8021q"
+    # - "bonding
+
+- name: Configure /etc/modules file
+  lineinfile: dest=/etc/modules line="{{ item }}"
+  with_items:
+    - '802.1q'
+    # - 'bonding'
+
 - name: Create Gluster Storage Volume
   command: "{{ item }}"
   with_items:
-    - 'gluster volume create vlab transport tcp Vlab-gluster1:/mnt/data/ Vlab-gluster2:/mnt/data/ --force'
+    - 'gluster peer probe Vlab-gluster1'
+    - 'gluster peer probe Vlab-gluster2'
+    - 'gluster volume create vlab transport tcp Vlab-gluster1:/mnt/data/ Vlab-gluster2:/mnt/data/ force'
+  ignore_errors: yes
 
 - name: Creates directories
   file: path="{{ item }}" state=directory owner=root group=root mode=0644
@@ -45,7 +60,7 @@
   - '/mnt/data/local_blade/OS_images'
 
 - name: configure /etc/fstab mount Vlab-backup
-  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock 0 0" state=mounted
+  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
   tags:
     - nfs
 

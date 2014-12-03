@@ -33,7 +33,7 @@
     - '192.168.35.99 Vlab-backup'
 
 - name: Configure /etc/fstab on clients for gluster server
-  mount: name="{{ item.dest }}" src="{{ item.source }}" fstype=glusterfs opts="defaults,_netdev 0 0" state=present
+  mount: name="{{ item.dest }}" src="{{ item.source }}" fstype=glusterfs opts="defaults,_netdev" state=present
   with_items: 
     - { dest: '/home/OS_images', source: 'Vlab-gluster1:/vlab/OS_images' }
     - { dest: '/home/local_blade/OS_images', source: 'Vlab-gluster1:/vlab/OS_images' }
@@ -42,7 +42,7 @@
     - { dest: '/home/backup', source: 'Vlab-backup:/mnt/backup/' }
 
 - name: configure /etc/fstab mount Vlab-backup
-  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock 0 0" state=mounted
+  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
   tags:
     - nfs
 
@@ -52,13 +52,14 @@
 - name: Enable the modules
   modprobe: name={{ item }} state=present
   with_items:
-    - "802.1q"
+    - "8021q"
     #- "bonding"
 
 - name: Configure /etc/modules file
-  lineinfile: dest=/etc/modules line={{ item }}
-    - "802.1q"
-    #- "bonding"
+  lineinfile: dest=/etc/modules line="{{ item }}"
+  with_items:
+    - '802.1q'
+    #- 'bonding'
 
 - name: Creates directories
   file: path={{ item }} state=directory owner=root group=root mode=0640
@@ -67,7 +68,7 @@
   - "/home/local_blade/OS_images"
 
 - name: copy the files to /bld-startup
-  copy: src=/bld-startup/ dest=/bld-startup/ mode=640
+  copy: src=bld-startup/ dest=/bld-startup/ mode=640
 
 - name: Configure /etc/default/grub file (tuning Xen Dom0)
   lineinfile: dest=/etc/default/grub regexp="{{ item.old }}"" line="{{ item.new }}"
