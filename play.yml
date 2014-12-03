@@ -1,0 +1,19 @@
+---
+
+- hosts: Gluster
+  user: ubuntu
+  sudo: yes
+  roles: 
+    - Gluster-storage
+
+- hosts: Xen
+  user: ubuntu
+  sudo: yes
+  roles: 
+    - Xen-node
+
+- hosts: Vital
+  user: ubuntu
+  sudo: yes
+  roles:
+    - Vital-gateway

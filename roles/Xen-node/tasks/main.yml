@@ -77,5 +77,5 @@
     - { old: '^GRUB_CMDLINE_LINUX=', new: 'GRUB_CMDLINE_LINUX="loglevel=9 console=ttyS0 earlyprintk=xen"' }
     - { old: '^GRUB_TERMINAL=', new: 'GRUB_TERMINAL="console serial"' }
 
-- name: Reboot
-  command: /sbin/shutdown -r now
+# - name: Reboot
+#  command: /sbin/shutdown -r now
