@@ -34,8 +34,6 @@
 - name: Create Gluster Storage Volume
   command: "{{ item }}"
   with_items:
-    - 'gluster peer probe Vlab-gluster1'
-    - 'gluster peer probe Vlab-gluster2'
     - 'gluster volume create vlab transport tcp Vlab-gluster1:/mnt/data/ Vlab-gluster2:/mnt/data/ --force'
 
 - name: Creates directories

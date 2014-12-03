@@ -67,7 +67,7 @@
   - "/home/local_blade/OS_images"
 
 - name: copy the files to /bld-startup
-  copy: src=files/bld-startup/ dest=/bld-startup/ mode=640
+  copy: src=/bld-startup/ dest=/bld-startup/ mode=640
 
 - name: Configure /etc/default/grub file (tuning Xen Dom0)
   lineinfile: dest=/etc/default/grub regexp="{{ item.old }}"" line="{{ item.new }}"
