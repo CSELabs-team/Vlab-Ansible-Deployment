@@ -145,11 +145,13 @@
     - { dest: "/home/vlab_scp", source: "Vlab-gluster1:/vlab/vlab_scp" }
     - { dest: "/home/vmdsk", source: "Vlab-gluster1:/vlab/vmdsk" }
     - { dest: "/home/backup", source: "Vlab-backup:/mnt/backup/" }
+  ignore_errors: yes
 
 - name: Configure /etc/fstab mount Vlab-backup
   mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock 0 0" state=mounted
   tags:
     - nfs
+  ignore_errors: yes
 
 - name: Run Script Deploy root SSH Public Key to others
   script: /home/gateway-installer/ssh-copy-id-multi.sh

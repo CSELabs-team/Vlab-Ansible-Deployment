@@ -63,5 +63,6 @@
   mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
   tags:
     - nfs
+  ignore_errors: yes
 
 
