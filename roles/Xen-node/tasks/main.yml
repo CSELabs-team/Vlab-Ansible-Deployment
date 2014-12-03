@@ -16,7 +16,7 @@
     - vlan
     - ifenslave
     - glusterfs-client
-    - xen-hypervisor-amd64
+    - xen-hypervisor-4.4-amd64
     - nfs-common
 
 - name: Configure /etc/hosts
@@ -40,11 +40,13 @@
     - { dest: '/home/vlab_scp', source: 'Vlab-gluster1:/vlab/vlab_scp' }
     - { dest: '/home/vmdsk', source: 'Vlab-gluster1:/vlab/vmdsk' }
     - { dest: '/home/backup', source: 'Vlab-backup:/mnt/backup/' }
+  ignore_errors: yes
 
 - name: configure /etc/fstab mount Vlab-backup
   mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
   tags:
     - nfs
+  ignore_errors: yes
 
 - name: Creates an entry like "@reboot /some/job.sh"
   cron: name="Startup script" special_time=reboot job="/bld-startup/bld-network-startup.sh"
@@ -71,7 +73,7 @@
   copy: src=bld-startup/ dest=/bld-startup/ mode=640
 
 - name: Configure /etc/default/grub file (tuning Xen Dom0)
-  lineinfile: dest=/etc/default/grub regexp="{{ item.old }}"" line="{{ item.new }}"
+  lineinfile: dest=/etc/default/grub regexp="{{ item.old }}" line="{{ item.new }}"
   with_items:
     - { old: '^GRUB_CMDLINE_XEN=', new: 'GRUB_CMDLINE_XEN="dom0_mem=16G,max:16G dom0_max_vcpus=6 dom0_vcpus_pin iommu=1 loglvl=all guest_loglvl=all com1=9600,8n1,0x3e8,5 console=com1,vga"'
 }
