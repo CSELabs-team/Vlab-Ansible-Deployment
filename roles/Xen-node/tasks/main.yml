@@ -32,14 +32,28 @@
     - '192.168.35.77 Vlab-xen5'
     - '192.168.35.99 Vlab-backup'
 
+- name: Creates directories
+  file: path={{ item }} state=directory owner=root group=root mode=755
+  with_items:
+  - "/bld-startup"
+  - "/mnt/vlab-datastore"
+
+- name: copy the files to /bld-startup
+  copy: src=bld-startup/ dest=/bld-startup/ mode=755
+
 - name: Configure /etc/fstab on clients for gluster server
   mount: name="{{ item.dest }}" src="{{ item.source }}" fstype=glusterfs opts="defaults,_netdev" state=present
   with_items: 
-    - { dest: '/home/OS_images', source: 'Vlab-gluster1:/vlab/OS_images' }
-    - { dest: '/home/local_blade/OS_images', source: 'Vlab-gluster1:/vlab/OS_images' }
-    - { dest: '/home/vlab_scp', source: 'Vlab-gluster1:/vlab/vlab_scp' }
-    - { dest: '/home/vmdsk', source: 'Vlab-gluster1:/vlab/vmdsk' }
+    - { dest: '/mnt/vlab-datastore', source: 'Vlab-gluster1:/vlab' }
   ignore_errors: yes
+
+- name Create soft links for datastore
+  file: src= "{{ item.src }}" dest="{{ item.dest }}" mode=755 state=link
+  with_items:
+  - { src: '/mnt/vlab-datastore/OS_images', dest: '/home/OS_images' }
+  - { src: '/mnt/vlab-datastore/vmdsk', dest: '/home/vmdsk' }
+  - { src: '/mnt/vlab-datastore/vlab_scp', dest: '/home/vlab_scp' }
+  - { src: '/mnt/vlab-datastore/OS_images', dest: '/home/local_blade/OS_images' }
 
 #- name: configure /etc/fstab mount Vlab-backup
 #  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
@@ -61,15 +75,6 @@
   with_items:
     - '802.1q'
     #- 'bonding'
-
-- name: Creates directories
-  file: path={{ item }} state=directory owner=root group=root mode=770
-  with_items:
-  - "/bld-startup"
-  - "/home/local_blade/OS_images"
-
-- name: copy the files to /bld-startup
-  copy: src=bld-startup/ dest=/bld-startup/ mode=770
 
 - name: Configure /etc/default/grub file (tuning Xen Dom0)
   lineinfile: dest=/etc/default/grub regexp="{{ item.old }}" line="{{ item.new }}"

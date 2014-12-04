@@ -43,6 +43,13 @@
     - '802.1q'
     # - 'bonding'
 
+- name: Creates directories
+  file: path="{{ item }}" state=directory owner=root group=root mode=755
+  with_items:
+  - '/mnt/data/OS_images'
+  - '/mnt/data/vmdsk'
+  - '/mnt/data/vlab_scp'
+
 - name: Create Gluster Storage Volume
   command: "{{ item }}"
   with_items:
@@ -54,14 +61,6 @@
 
 - name: Creates an entry like "@reboot /some/job.sh"
   cron: name="Startup script" special_time=reboot job="gluster volume start vlab"
-
-- name: Creates directories
-  file: path="{{ item }}" state=directory owner=root group=root mode=0644
-  with_items:
-  - '/mnt/data/OS_images'
-  - '/mnt/data/vmdsk'
-  - '/mnt/data/vlab_scp'
-  - '/mnt/data/local_blade/OS_images'
 
 - name: configure /etc/fstab mount Vlab-backup
   mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
