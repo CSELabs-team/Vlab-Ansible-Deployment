@@ -3,7 +3,7 @@
 - name: restart postgresql
   service: 
     name=postgresql
-    state=restart
+    state=restarted
 
 - name: restart apache
   service: 
