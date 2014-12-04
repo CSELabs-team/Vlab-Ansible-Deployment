@@ -49,7 +49,11 @@
     - 'gluster peer probe Vlab-gluster1'
     - 'gluster peer probe Vlab-gluster2'
     - 'gluster volume create vlab transport tcp Vlab-gluster1:/mnt/data/ Vlab-gluster2:/mnt/data/ force'
+    - 'gluster volume start vlab'
   ignore_errors: yes
+
+- name: Creates an entry like "@reboot /some/job.sh"
+  cron: name="Startup script" special_time=reboot job="gluster volume start vlab"
 
 - name: Creates directories
   file: path="{{ item }}" state=directory owner=root group=root mode=0644

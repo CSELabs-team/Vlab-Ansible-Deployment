@@ -14,7 +14,7 @@ let eindex=1000
 for ((i=sindex; i <= eindex; i++))
 do
 
-psql -d vlab --command "insert into vlab_interim.user (user_name, user_pass) values ('student$i', '`./pwgen.sh [:alnum:] 8 8`')"
+psql -d vlab --command "insert into vlab_interim.user (user_name, user_pass) values ('student$i', '`/home/gateway-installer/pwgen.sh [:alnum:] 8 8`')"
 
 psql -d vlab --command "insert into vlab_interim.sftp (user_id, sftp_user, sftp_pass) values ((select user_id from vlab_interim.user where user_name = 'student$i'), 'vlab_student$i', 'not set')"
 

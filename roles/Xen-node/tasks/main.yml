@@ -39,14 +39,13 @@
     - { dest: '/home/local_blade/OS_images', source: 'Vlab-gluster1:/vlab/OS_images' }
     - { dest: '/home/vlab_scp', source: 'Vlab-gluster1:/vlab/vlab_scp' }
     - { dest: '/home/vmdsk', source: 'Vlab-gluster1:/vlab/vmdsk' }
-    - { dest: '/home/backup', source: 'Vlab-backup:/mnt/backup/' }
   ignore_errors: yes
 
-- name: configure /etc/fstab mount Vlab-backup
-  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
-  tags:
-    - nfs
-  ignore_errors: yes
+#- name: configure /etc/fstab mount Vlab-backup
+#  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
+#  tags:
+#    - nfs
+#  ignore_errors: yes
 
 - name: Creates an entry like "@reboot /some/job.sh"
   cron: name="Startup script" special_time=reboot job="/bld-startup/bld-network-startup.sh"
@@ -64,13 +63,13 @@
     #- 'bonding'
 
 - name: Creates directories
-  file: path={{ item }} state=directory owner=root group=root mode=0640
+  file: path={{ item }} state=directory owner=root group=root mode=770
   with_items:
   - "/bld-startup"
   - "/home/local_blade/OS_images"
 
 - name: copy the files to /bld-startup
-  copy: src=bld-startup/ dest=/bld-startup/ mode=640
+  copy: src=bld-startup/ dest=/bld-startup/ mode=770
 
 - name: Configure /etc/default/grub file (tuning Xen Dom0)
   lineinfile: dest=/etc/default/grub regexp="{{ item.old }}" line="{{ item.new }}"
@@ -79,6 +78,7 @@
 }
     - { old: '^GRUB_CMDLINE_LINUX=', new: 'GRUB_CMDLINE_LINUX="loglevel=9 console=ttyS0 earlyprintk=xen"' }
     - { old: '^GRUB_TERMINAL=', new: 'GRUB_TERMINAL="console serial"' }
-
+  ignore_errors: yes
+  
 # - name: Reboot
 #  command: /sbin/shutdown -r now

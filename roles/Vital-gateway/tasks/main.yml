@@ -19,7 +19,8 @@
     - apache2 
     - postgresql
     - python-psycopg2 
-    - php5 
+    - php5
+    - apache2-utils 
     - libapache2-mod-php5 
     - php5-pgsql 
     - tcpdump 
@@ -46,19 +47,19 @@
   user: name=root generate_ssh_key=yes ssh_key_bits=2048
 
 - name: Creates directories
-  file: path=/var/log/vlab/ state=directory owner=www-data group=www-data mode=0640
+  file: path=/var/log/vlab/ state=directory owner=www-data group=www-data mode=640
 
 - name: Creates directories
-  file: path=/startup_gateway state=directory owner=root group=root mode=0640
+  file: path=/startup_gateway state=directory owner=root group=root mode=770
 
 - name: Creates directories
-  file: path=/home/gateway-installer state=directory owner=root group=root mode=0640
+  file: path=/home/gateway-installer state=directory owner=root group=root mode=777
 
 - name: copy the files to /home/gateway-installer
-  copy: src=gateway-installer/ dest=/home/gateway-installer/ mode=640
+  copy: src=gateway-installer/ dest=/home/gateway-installer/ mode=777
 
 - name: copy the files to /startup_gateway
-  copy: src=startup_gateway/ dest=/startup_gateway/ mode=640
+  copy: src=startup_gateway/ dest=/startup_gateway/ mode=770
 
 - name: Edit Crontab job
   cron: name="Stop-old-VMs" minute="*/10" job="/startup_gateway/stop-old.sh >> /var/log/vlab/cron-stop-old-output"
@@ -84,17 +85,19 @@
     - '802.1q'
     # - 'bonding'
 
+- name:  template Vlab pache2 conf
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+  - { src: 'pg_hba.conf.j2', dest: '/etc/postgresql/9.3/main/pg_hba.conf' }
+
 - name: Create a new database with name "vlab"
-  sudo: yes
-  sudo_user: postgres
   postgresql_db: name=vlab
 
 - name: Ensure user postgres has access to database
-  sudo: yes
-  sudo_user: postgres
   postgresql_user: db=vlab name=postgres password=postgres priv=ALL
 
 - name: Run Vlab-schema for postgresql
+  sudo_user: postgres
   command: "{{ item }}"
   with_items:
   - 'psql -d vlab -f /home/gateway-installer/vlab-schema.sql'
@@ -103,31 +106,28 @@
     - restart postgresql
 
 - name: Run Script Add accounts to DB
-  script: /home/gateway-installer/add_accounts.sh
+  sudo_user: postgres
+  command: /home/gateway-installer/add-accounts.sh
 
 - name: Create /var/www/glf username and password in batch mode
-  command: htpasswd -b /usr/local/apache2/passwd/passwords glfadmin postgres
+  command: htpasswd -c -b /startup_gateway/passwords glfadmin postgres
 
 - name:  template Vlab pache2 conf
   template: src={{ item.src }} dest={{ item.dest }}
   with_items:
-  - { src: 'templates/vlab.http.conf.j2', dest: '/etc/apache2/sites-available/vlab.http.conf' }
-  - { src: 'templates/vlab.https.conf.j2', dest: '/etc/apache2/sites-available/vlab.https.conf' }
+  - { src: 'vlab.http.conf.j2', dest: '/etc/apache2/sites-available/vlab.http.conf' }
+  - { src: 'vlab.https.conf.j2', dest: '/etc/apache2/sites-available/vlab.https.conf' }
 
 - name: Enable Apache module
-  command: "{{ item }}""
+  command: "{{ item }}"
   with_items:
   - 'a2enmod ssl rewrite'
   - 'a2ensite vlab.http.conf'
   - 'a2ensite vlab.https.conf'
 
 - name: Copy Vlab source code
-  copy: src=www/ dest=/var/www mode=640 owner=www-data group=www-data
-
-- name: Check that our Apache config is valid
-  command: apache2ctl configtest
-  notify:
-    - restart apache
+  copy: src=www/ dest=/var/www/ mode=664 owner=www-data group=www-data
+  ignore_errors: yes
 
 - name: Copy the SSL certificate key
   copy: src={{ item.key_src }} dest={{ item.key_dest }} mode=640
@@ -137,24 +137,28 @@
   notify:
     - restart apache
 
+- name: Check that our Apache config is valid
+  command: apache2ctl configtest
+  notify:
+    - restart apache
+
 - name: Configure /etc/fstab on clients for gluster server
-  mount: name={{ item.dest }} src={{ item.source }} fstype=glusterfs opts="defaults,_netdev 0 0" state=mounted
+  mount: name={{ item.dest }} src={{ item.source }} fstype=glusterfs opts="defaults,_netdev" state=mounted
   with_items: 
     - { dest: "/home/OS_images", source: "Vlab-gluster1:/vlab/OS_images" }
     - { dest: "/home/local_blade/OS_images", source: "Vlab-gluster1:/vlab/OS_images" }
     - { dest: "/home/vlab_scp", source: "Vlab-gluster1:/vlab/vlab_scp" }
     - { dest: "/home/vmdsk", source: "Vlab-gluster1:/vlab/vmdsk" }
-    - { dest: "/home/backup", source: "Vlab-backup:/mnt/backup/" }
   ignore_errors: yes
 
 - name: Configure /etc/fstab mount Vlab-backup
-  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock 0 0" state=mounted
+  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
   tags:
     - nfs
   ignore_errors: yes
 
-- name: Run Script Deploy root SSH Public Key to others
-  script: /home/gateway-installer/ssh-copy-id-multi.sh
+#- name: Run Script Deploy root SSH Public Key to others
+#  command: /home/gateway-installer/ssh-copy-id-multi.sh
 
 # - name: Reboot
 # command: /sbin/shutdown -r now
