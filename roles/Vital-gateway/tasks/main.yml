@@ -90,11 +90,17 @@
   with_items:
   - { src: 'pg_hba.conf.j2', dest: '/etc/postgresql/9.3/main/pg_hba.conf' }
 
+- name: Create root user
+  sudo_user: postgres
+  command: "createuser -a -d -U root"
+
 - name: Create a new database with name "vlab"
-  postgresql_db: name=vlab
+  sudo_user: postgres
+  postgresql_db: name=vlab owner=root
 
 - name: Ensure user postgres has access to database
-  postgresql_user: db=vlab name=postgres password=postgres priv=ALL
+  sudo_user: postgres
+  postgresql_user: db=vlab name=root password=postgres priv=ALL
 
 - name: Run Vlab-schema for postgresql
   sudo_user: postgres
@@ -106,7 +112,6 @@
     - restart postgresql
 
 - name: Run Script Add accounts to DB
-  sudo_user: postgres
   command: /home/gateway-installer/add-accounts.sh
 
 - name: Create /var/www/glf username and password in batch mode
@@ -122,6 +127,7 @@
   command: "{{ item }}"
   with_items:
   - 'a2enmod ssl rewrite'
+  - 'a2dissite 000-default.conf'
   - 'a2ensite vlab.http.conf'
   - 'a2ensite vlab.https.conf'
 
