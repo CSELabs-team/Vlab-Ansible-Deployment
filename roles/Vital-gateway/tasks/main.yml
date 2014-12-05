@@ -133,9 +133,10 @@
   - 'a2ensite vlab.http.conf'
   - 'a2ensite vlab.https.conf'
 
-#- name: Copy Vlab source code
-#  copy: src=www/ dest=/var/www/ mode=755 owner=www-data group=www-data
-#  ignore_errors: yes
+- name: Copy Vlab source code
+  sudo: yes
+  copy: src=www/ dest=/var/www/ mode=755 owner=www-data group=www-data
+  ignore_errors: yes
 
 - name: Copy the SSL certificate key
   copy: src={{ item.key_src }} dest={{ item.key_dest }} mode=755

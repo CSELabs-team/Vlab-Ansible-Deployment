@@ -1,16 +1,16 @@
 ---
 
-- hosts: Gluster
-  user: vagrant
-  sudo: yes
-  roles:
-    - Gluster-storage
+#- hosts: Gluster
+#  user: vagrant
+#  sudo: yes
+#  roles:
+#    - Gluster-storage
 
-- hosts: Xen
-  user: vagrant
-  sudo: yes
-  roles:
-    - Xen-node
+#- hosts: Xen
+#  user: vagrant
+#  sudo: yes
+#  roles:
+#    - Xen-node
 
 - hosts: Vital
   user: vagrant
