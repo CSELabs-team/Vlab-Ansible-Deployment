@@ -11,22 +11,22 @@
 
 - name: Install list of packages
   apt: pkg={{item}} state=installed
-  with_items: 
+  with_items:
     - vlan
     - ifenslave
     - bridge-utils
     - glusterfs-client
-    - apache2 
+    - apache2
     - postgresql
-    - python-psycopg2 
+    - python-psycopg2
     - php5
-    - apache2-utils 
-    - libapache2-mod-php5 
-    - php5-pgsql 
-    - tcpdump 
-    - libjpeg62 
-    - libjpeg8 
-    - libjpeg8-dev 
+    - apache2-utils
+    - libapache2-mod-php5
+    - php5-pgsql
+    - tcpdump
+    - libjpeg62
+    - libjpeg8
+    - libjpeg8-dev
     - sendmail
     - nfs-common
 
@@ -38,7 +38,7 @@
     - '192.168.35.22 Vlab-gluster2'
     - '192.168.35.33 Vlab-xen1'
     - '192.168.35.44 Vlab-xen2'
-    - '192.168.35.55 Vlab-xen3' 
+    - '192.168.35.55 Vlab-xen3'
     - '192.168.35.66 Vlab-xen4'
     - '192.168.35.77 Vlab-xen5'
     - '192.168.35.99 Vlab-backup'
@@ -51,6 +51,9 @@
 
 - name: Creates directories
   file: path=/startup_gateway state=directory owner=root group=root mode=755
+
+- name: Creates directories
+  file: path=/home/local_blade state=directory owner=root group=root mode=755
 
 - name: Creates directories
   file: path=/home/gateway-installer state=directory owner=root group=root mode=755
@@ -93,6 +96,7 @@
 - name: Create a new database with name vlab
   sudo_user: postgres
   postgresql_db: name=vlab owner=postgres
+  ignore_errors: yes
 
 - name: Ensure user postgres has access to database
   sudo_user: postgres
@@ -129,13 +133,13 @@
   - 'a2ensite vlab.http.conf'
   - 'a2ensite vlab.https.conf'
 
-- name: Copy Vlab source code
-  copy: src=www/ dest=/var/www/ mode=664 owner=www-data group=www-data
-  ignore_errors: yes
+#- name: Copy Vlab source code
+#  copy: src=www/ dest=/var/www/ mode=755 owner=www-data group=www-data
+#  ignore_errors: yes
 
 - name: Copy the SSL certificate key
-  copy: src={{ item.key_src }} dest={{ item.key_dest }} mode=640
-  with_items: 
+  copy: src={{ item.key_src }} dest={{ item.key_dest }} mode=755
+  with_items:
   - { key_src: "gateway-installer/poly_cert.pem", key_dest: "/etc/ssl/certs/poly_cert.pem" }
   - { key_src: "gateway-installer/poly_key.key", key_dest: "/etc/ssl/private/poly_key.key" }
   notify:
@@ -148,12 +152,12 @@
 
 - name: Configure /etc/fstab on clients for gluster server
   mount: name="{{ item.dest }}" src="{{ item.source }}" fstype=glusterfs opts="defaults,_netdev" state=present
-  with_items: 
+  with_items:
     - { dest: '/mnt/vlab-datastore', source: 'Vlab-gluster1:/vlab' }
   ignore_errors: yes
 
-- name Create soft links for datastore
-  file: src= "{{ item.src }}" dest="{{ item.dest }}" mode=755 state=link
+- name: Create soft links for datastore
+  file: src="{{ item.src }}" dest="{{ item.dest }}" mode=755 state=link force=yes
   with_items:
   - { src: '/mnt/vlab-datastore/OS_images', dest: '/home/OS_images' }
   - { src: '/mnt/vlab-datastore/vmdsk', dest: '/home/vmdsk' }
@@ -169,10 +173,5 @@
 #- name: Run Script Deploy root SSH Public Key to others
 #  command: /home/gateway-installer/ssh-copy-id-multi.sh
 
-# - name: Reboot
-# command: /sbin/shutdown -r now
-
-
-
-
-
+#- name: Reboot
+#  command: /sbin/shutdown -r now

@@ -1,19 +1,19 @@
 ---
 
 - hosts: Gluster
-  user: ubuntu
+  user: vagrant
   sudo: yes
-  roles: 
+  roles:
     - Gluster-storage
 
 - hosts: Xen
-  user: ubuntu
+  user: vagrant
   sudo: yes
-  roles: 
+  roles:
     - Xen-node
 
 - hosts: Vital
-  user: ubuntu
+  user: vagrant
   sudo: yes
   roles:
     - Vital-gateway

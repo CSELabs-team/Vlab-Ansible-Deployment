@@ -1,9 +1,9 @@
 [Vital]
-Vital ansible_ssh_host=192.168.43.157 ansible_ssh_user="ubuntu" ansible_ssh_pass="reverse"
+Vital ansible_ssh_host=192.168.35.2 ansible_ssh_user="vagrant" ansible_ssh_pass="vagrant"
 
 [Xen]
-Xen ansible_ssh_host=192.168.43.117 ansible_ssh_user="ubuntu" ansible_ssh_pass="reverse"
+Xen ansible_ssh_host=192.168.35.33 ansible_ssh_user="vagrant" ansible_ssh_pass="vagrant"
 
 [Gluster]
-Gluster1 ansible_ssh_host=192.168.43.228 ansible_ssh_user="ubuntu" ansible_ssh_pass="reverse"
-Gluster2 ansible_ssh_host=192.168.43.22 ansible_ssh_user="ubuntu" ansible_ssh_pass="reverse"
+Gluster1 ansible_ssh_host=192.168.35.11 ansible_ssh_user="vagrant" ansible_ssh_pass="vagrant"
+Gluster2 ansible_ssh_host=192.168.35.22 ansible_ssh_user="vagrant" ansible_ssh_pass="vagrant"

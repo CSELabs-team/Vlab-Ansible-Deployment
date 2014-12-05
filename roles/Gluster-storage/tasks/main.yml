@@ -11,7 +11,7 @@
 
 - name: Install list of packages
   apt: pkg={{item}} state=installed
-  with_items: 
+  with_items:
     - bridge-utils
     - vlan
     - ifenslave
@@ -26,7 +26,7 @@
     - '192.168.35.22 Vlab-gluster2'
     - '192.168.35.33 Vlab-xen1'
     - '192.168.35.44 Vlab-xen2'
-    - '192.168.35.55 Vlab-xen3' 
+    - '192.168.35.55 Vlab-xen3'
     - '192.168.35.66 Vlab-xen4'
     - '192.168.35.77 Vlab-xen5'
     - '192.168.35.99 Vlab-backup'
@@ -35,7 +35,7 @@
   modprobe: name={{ item }} state=present
   with_items:
     - "8021q"
-    # - "bonding
+    # - "bonding"
 
 - name: Configure /etc/modules file
   lineinfile: dest=/etc/modules line="{{ item }}"
@@ -46,9 +46,7 @@
 - name: Creates directories
   file: path="{{ item }}" state=directory owner=root group=root mode=755
   with_items:
-  - '/mnt/data/OS_images'
-  - '/mnt/data/vmdsk'
-  - '/mnt/data/vlab_scp'
+  - '/mnt/data'
 
 - name: Create Gluster Storage Volume
   command: "{{ item }}"
@@ -59,6 +57,13 @@
     - 'gluster volume start vlab'
   ignore_errors: yes
 
+- name: Creates directories
+  file: path="{{ item }}" state=directory owner=root group=root mode=755
+  with_items:
+  - '/mnt/data/OS_images'
+  - '/mnt/data/vmdsk'
+  - '/mnt/data/vlab_scp'
+
 - name: Creates an entry like "@reboot /some/job.sh"
   cron: name="Startup script" special_time=reboot job="gluster volume start vlab"
 
@@ -68,4 +73,5 @@
     - nfs
   ignore_errors: yes
 
-
+#- name: Reboot
+#  command: /sbin/shutdown -r now
