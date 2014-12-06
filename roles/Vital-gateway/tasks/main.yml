@@ -29,6 +29,7 @@
     - libjpeg8-dev
     - sendmail
     - nfs-common
+    - git-core
 
 - name: Configure /etc/hosts
   lineinfile: dest=/etc/hosts line="{{ item }}"
@@ -133,10 +134,19 @@
   - 'a2ensite vlab.http.conf'
   - 'a2ensite vlab.https.conf'
 
-- name: Copy Vlab source code
-  sudo: yes
-  copy: src=www/ dest=/var/www/ mode=755 owner=www-data group=www-data
+#- name: Copy Vlab source code
+#  sudo: yes
+#  copy: src=www/ dest=/var/www/ mode=755 owner=www-data group=www-data
+#  ignore_errors: yes
+
+- name: Checkout Vlab source code from GitHub
+  git: repo=https://github.com/CSELabs-team/Vlab.git dest=/var/www recursive=yes force=yes
   ignore_errors: yes
+  tags:
+    - git
+
+- name: Make Sure the files permission
+  file: path=/var/www/ owner=www-data group=www-data mode=755 state=directory
 
 - name: Copy the SSL certificate key
   copy: src={{ item.key_src }} dest={{ item.key_dest }} mode=755
