@@ -1,0 +1,8 @@
+---
+
+- hosts: all
+  user: vagrant
+  sudo: yes
+  tasks:
+    - name: pass root ssh key to every node
+      copy: src=roles/Vital-gateway/files/gateway-installer/id_rsa.pub dest=/root/.ssh/authorized_keys mode=600 owner=root group=root
