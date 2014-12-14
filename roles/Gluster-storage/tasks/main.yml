@@ -66,14 +66,7 @@
 
 - name: Creates an entry like "@reboot /some/job.sh"
   cron: name="Startup script" special_time=reboot job="gluster volume start vlab"
-
-- name: Checkout Vlab_scp and Vlab_vmdsk source code from GitHub
-  git: repo="{{ item.source }}" dest="{{ item.dest }}" recursive=yes force=yes
-  with_items:
-  - { source: 'https://github.com/CSELabs-team/Vlab_scp.git', dest: '/mnt/data/vlab_scp' }
-  - { source: 'https://github.com/CSELabs-team/Vlab_vmdsk.git', dest: '/mnt/data/vmdsk' }
-  ignore_errors: yes
-
+  
 - name: Make Sure the files permission
   file: path=/mnt/data owner=root group=root mode=755 state=directory
 

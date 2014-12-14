@@ -170,6 +170,13 @@
   - { src: '/mnt/vlab-datastore/vlab_scp', dest: '/home/vlab_scp' }
   - { src: '/mnt/vlab-datastore/OS_images', dest: '/home/local_blade/OS_images' }
 
+- name: Checkout Vlab_scp and Vlab_vmdsk source code from GitHub
+  git: repo="{{ item.source }}" dest="{{ item.dest }}" recursive=yes force=yes
+  with_items:
+  - { source: 'https://github.com/CSELabs-team/Vlab_scp.git', dest: '/mnt/data/vlab_scp' }
+  - { source: 'https://github.com/CSELabs-team/Vlab_vmdsk.git', dest: '/mnt/data/vmdsk' }
+  ignore_errors: yes
+  
 - name: Configure /etc/fstab mount Vlab-backup
   mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
   tags:
