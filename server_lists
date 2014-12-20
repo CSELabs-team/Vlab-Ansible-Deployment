@@ -1,9 +1,13 @@
 [Vital]
-Vital ansible_ssh_host=192.168.35.2 ansible_ssh_user="vagrant" ansible_ssh_pass="vagrant"
+Vlab-vital ansible_ssh_host=192.168.35.1 ansible_ssh_user="@" ansible_ssh_pass="@"
 
 [Xen]
-Xen ansible_ssh_host=192.168.35.33 ansible_ssh_user="vagrant" ansible_ssh_pass="vagrant"
+Vlab-xen1 ansible_ssh_host=192.168.35.33 ansible_ssh_user="@" ansible_ssh_pass="@"
+Vlab-xen2 ansible_ssh_host=192.168.35.44 ansible_ssh_user="@" ansible_ssh_pass="@"
+Vlab-xen3 ansible_ssh_host=192.168.35.55 ansible_ssh_user="@" ansible_ssh_pass="@"
+Vlab-xen4 ansible_ssh_host=192.168.35.66 ansible_ssh_user="@" ansible_ssh_pass="@"
+Vlab-xen5 ansible_ssh_host=192.168.35.77 ansible_ssh_user="@" ansible_ssh_pass="@"
 
 [Gluster]
-Gluster1 ansible_ssh_host=192.168.35.11 ansible_ssh_user="vagrant" ansible_ssh_pass="vagrant"
-Gluster2 ansible_ssh_host=192.168.35.22 ansible_ssh_user="vagrant" ansible_ssh_pass="vagrant"
+Vlab-gluster1 ansible_ssh_host=192.168.35.11 ansible_ssh_user="@" ansible_ssh_pass="@"
+Vlab-gluster2 ansible_ssh_host=192.168.35.22 ansible_ssh_user="@" ansible_ssh_pass="@"

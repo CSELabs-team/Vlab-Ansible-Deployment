@@ -1,19 +1,19 @@
 ---
 
 - hosts: Gluster
-  user: vagrant
   sudo: yes
   roles:
     - Gluster-storage
 
 - hosts: Xen
-  user: vagrant
   sudo: yes
   roles:
     - Xen-node
 
 - hosts: Vital
-  user: vagrant
   sudo: yes
   roles:
     - Vital-gateway
+
+- tasks:
+  include: multi_pass_ssh_key.yml

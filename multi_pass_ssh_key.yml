@@ -1,7 +1,7 @@
 ---
 
 - hosts: all
-  user: vagrant
+  user: cselabs
   sudo: yes
   tasks:
     - name: pass root ssh key to every node

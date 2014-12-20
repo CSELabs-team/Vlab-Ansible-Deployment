@@ -66,6 +66,9 @@
   copy: src=startup_gateway/ dest=/startup_gateway/ mode=755
 
 - name: Edit Crontab job
+  cron: name="Stop-old-VMs" minute="*/5" job="/startup_gateway/ping-detector.sh"
+
+- name: Edit Crontab job
   cron: name="Stop-old-VMs" minute="*/10" job="/startup_gateway/stop-old.sh >> /var/log/vlab/cron-stop-old-output"
 
 - name: Creates an entry like "@reboot /some/job.sh"
@@ -176,7 +179,7 @@
   - { source: 'https://github.com/CSELabs-team/Vlab_scp.git', dest: '/mnt/data/vlab_scp' }
   - { source: 'https://github.com/CSELabs-team/Vlab_vmdsk.git', dest: '/mnt/data/vmdsk' }
   ignore_errors: yes
-  
+
 - name: Configure /etc/fstab mount Vlab-backup
   mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
   tags:
