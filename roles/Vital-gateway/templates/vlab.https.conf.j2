@@ -21,6 +21,7 @@
                 <Directory /var/www/glf>
                         AuthType Basic
                         AuthName "Restricted"
+                        AuthBasicProvider file
                         AuthUserFile /startup_gateway/passwords
                         Require user glfadmin
                 </Directory>
@@ -36,7 +37,7 @@
                 <Directory /usr/lib/cgi-bin>
                                 SSLOptions +StdEnvVars
                 </Directory>
-                
+
                 BrowserMatch "MSIE [2-6]" \
                                 nokeepalive ssl-unclean-shutdown \
                                 downgrade-1.0 force-response-1.0

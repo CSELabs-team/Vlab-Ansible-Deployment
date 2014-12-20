@@ -66,7 +66,7 @@
   copy: src=startup_gateway/ dest=/startup_gateway/ mode=755
 
 - name: Edit Crontab job
-  cron: name="Stop-old-VMs" minute="*/5" job="/startup_gateway/ping-detector.sh"
+  cron: name="Ping-dector" minute="*/5" job="/startup_gateway/ping-detector.sh"
 
 - name: Edit Crontab job
   cron: name="Stop-old-VMs" minute="*/10" job="/startup_gateway/stop-old.sh >> /var/log/vlab/cron-stop-old-output"

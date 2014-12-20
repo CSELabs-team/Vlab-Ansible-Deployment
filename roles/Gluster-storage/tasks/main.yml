@@ -57,6 +57,15 @@
     - 'gluster volume start vlab'
   ignore_errors: yes
 
+- name: Creates an entry like "@reboot /some/job.sh"
+  cron: name="Startup script" special_time=reboot job="gluster volume start vlab"
+
+- name: configure /etc/fstab mount Vlab-backup
+  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
+  tags:
+    - nfs
+  ignore_errors: yes
+
 - name: Creates directories
   file: path="{{ item }}" state=directory owner=root group=root mode=755
   with_items:
@@ -64,17 +73,8 @@
   - '/mnt/data/vmdsk'
   - '/mnt/data/vlab_scp'
 
-- name: Creates an entry like "@reboot /some/job.sh"
-  cron: name="Startup script" special_time=reboot job="gluster volume start vlab"
-  
 - name: Make Sure the files permission
   file: path=/mnt/data owner=root group=root mode=755 state=directory
-
-- name: configure /etc/fstab mount Vlab-backup
-  mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted
-  tags:
-    - nfs
-  ignore_errors: yes
 
 #- name: Reboot
 #  command: /sbin/shutdown -r now
