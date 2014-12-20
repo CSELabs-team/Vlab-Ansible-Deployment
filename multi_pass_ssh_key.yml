@@ -1,8 +1,11 @@
 ---
 
 - hosts: all
-  user: cselabs
+  user: "@"
   sudo: yes
   tasks:
+    - name: Creates directories
+      file: path=/root/.ssh/ state=directory owner=root group=root mode=600
+
     - name: pass root ssh key to every node
       copy: src=roles/Vital-gateway/files/gateway-installer/id_rsa.pub dest=/root/.ssh/authorized_keys mode=600 owner=root group=root

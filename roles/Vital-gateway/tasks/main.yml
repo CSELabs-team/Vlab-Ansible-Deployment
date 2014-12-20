@@ -138,7 +138,7 @@
   - 'a2ensite vlab.https.conf'
 
 - name: Checkout Vlab source code from GitHub
-  git: repo=https://github.com/CSELabs-team/Vlab.git dest=/var/www recursive=yes force=yes
+  git: repo=https://github.com/CSELabs-team/Vlab.git dest=/var/www force=yes
   ignore_errors: yes
   tags:
     - git
@@ -174,7 +174,7 @@
   - { src: '/mnt/vlab-datastore/OS_images', dest: '/home/local_blade/OS_images' }
 
 - name: Checkout Vlab_scp and Vlab_vmdsk source code from GitHub
-  git: repo="{{ item.source }}" dest="{{ item.dest }}" recursive=yes force=yes
+  git: repo="{{ item.source }}" dest="{{ item.dest }}" force=yes
   with_items:
   - { source: 'https://github.com/CSELabs-team/Vlab_scp.git', dest: '/mnt/data/vlab_scp' }
   - { source: 'https://github.com/CSELabs-team/Vlab_vmdsk.git', dest: '/mnt/data/vmdsk' }
