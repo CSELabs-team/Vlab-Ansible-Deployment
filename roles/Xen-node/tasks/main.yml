@@ -55,6 +55,7 @@
   - { src: '/mnt/vlab-datastore/vmdsk', dest: '/home/vmdsk' }
   - { src: '/mnt/vlab-datastore/vlab_scp', dest: '/home/vlab_scp' }
   - { src: '/mnt/vlab-datastore/OS_images', dest: '/home/local_blade/OS_images' }
+  - { src: '/mnt/vlab-datastore/OS_images', dest: '/home/vmdsk/base_images'}
 
 - name: configure /etc/fstab mount Vlab-backup
   mount: name=/home/backup src=Vlab-backup:/mnt/backup/ fstype=nfs opts="async,hard,intr,rw,nolock" state=mounted

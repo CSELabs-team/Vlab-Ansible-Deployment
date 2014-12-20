@@ -176,6 +176,7 @@
   - { src: '/mnt/vlab-datastore/vmdsk', dest: '/home/vmdsk' }
   - { src: '/mnt/vlab-datastore/vlab_scp', dest: '/home/vlab_scp' }
   - { src: '/mnt/vlab-datastore/OS_images', dest: '/home/local_blade/OS_images' }
+  - { src: '/mnt/vlab-datastore/OS_images', dest: '/home/vmdsk/base_images'}
 
 - name: Checkout Vlab_scp and Vlab_vmdsk source code from GitHub
   git: repo="{{ item.source }}" dest="{{ item.dest }}" force=yes
