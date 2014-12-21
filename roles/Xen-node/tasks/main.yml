@@ -81,10 +81,13 @@
 #- name: Configure /etc/default/grub file (tuning Xen Dom0)
 #  lineinfile: dest=/etc/default/grub regexp="{{ item.old }}" line="{{ item.new }}"
 #  with_items:
-#    - { old: '^GRUB_CMDLINE_XEN=', new: 'GRUB_CMDLINE_XEN="dom0_mem=16G,max:16G dom0_max_vcpus=6 dom0_vcpus_pin iommu=1 loglvl=all guest_loglvl=all com1=9600,8n1,0x3e8,5 console=com1,vga"' }
+#    - { old: '^GRUB_CMDLINE_XEN=', new: 'GRUB_CMDLINE_XEN="dom0_mem=16G,max:16G dom0_max_vcpus=4 dom0_vcpus_pin iommu=1 loglvl=all guest_loglvl=all com1=9600,8n1,0x3e8,5 console=com1,vga"' }
 #    - { old: '^GRUB_CMDLINE_LINUX=', new: 'GRUB_CMDLINE_LINUX="loglevel=9 console=ttyS0 earlyprintk=xen"' }
 #    - { old: '^GRUB_TERMINAL=', new: 'GRUB_TERMINAL="console serial"' }
 #  ignore_errors: yes
+
+#- name: update-grub
+#  raw: update-grub
 
 #- name: Reboot
 #  command: /sbin/shutdown -r now
