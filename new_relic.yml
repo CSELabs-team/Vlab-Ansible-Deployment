@@ -1,0 +1,23 @@
+---
+
+- hosts: all
+  user: cselabs
+  sudo: yes
+  tasks:
+    - name: add New Relic to repo
+      raw: "echo deb http://apt.newrelic.com/debian/ newrelic non-free >> /etc/apt/sources.list.d/newrelic.list"
+
+    - name: Trust New Relic GPG key
+      raw: "wget -O- https://download.newrelic.com/548C16BF.gpg | apt-key add -"
+
+    - name: Run the equivalent of "apt-get update" as a separate step
+      apt: update_cache=yes
+
+    - name: Install list of packages
+      apt: pkg=newrelic-sysmond state=installed
+
+    - name: Configure Server Monitor daemon
+      raw: "nrsysmond-config --set license_key=YOURKEY"
+
+    - name: Start daemon
+      raw: /etc/init.d/newrelic-sysmond start

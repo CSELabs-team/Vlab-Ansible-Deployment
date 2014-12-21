@@ -17,3 +17,6 @@
 
 - tasks:
   include: multi_pass_ssh_key.yml
+
+- tasks:
+  include: new_relic.yml
