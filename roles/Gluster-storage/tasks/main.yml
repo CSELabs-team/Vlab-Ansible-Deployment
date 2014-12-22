@@ -76,5 +76,14 @@
 - name: Make Sure the files permission
   file: path=/mnt/data owner=root group=root mode=755 state=directory
 
+- name: Tuning GlusterFS
+  raw: "{{ item }}"
+  with_items:
+    - 'gluster volume set vlab performance.io-thread-count 64'
+    - 'gluster volume set vlab performance.cache-size 6GB'
+    - 'gluster volume set vlab performance.cache-max-file-size 16384PB'
+    - 'gluster volume set vlab performance.cache-min-file-size 0'
+    - 'gluster volume set vlab performance.write-behind-window-size 1GB'
+
 #- name: Reboot
 #  command: /sbin/shutdown -r now
