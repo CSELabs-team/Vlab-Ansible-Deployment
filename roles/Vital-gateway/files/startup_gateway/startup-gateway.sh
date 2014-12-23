@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mount -t glusterfs Vlab-gluster1:/vlab /mnt/vlab-datastore
+
 # create temp directory
 mkdir /tmp/vlab
 mkdir /tmp/vlab/vncpwd
